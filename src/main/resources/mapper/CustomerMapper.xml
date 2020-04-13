@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hp.mapper.CustomerMapper">
+    <!-- 客户映射结果 -->
+    <resultMap id="CustomerResult" type="com.hp.entity.Customer">
+        <id column="customer_id" property="customerId"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="sex" property="sex"/>
+        <result column="telephone" property="telephone"/>
+        <result column="company" property="company"/>
+        <result column="address" property="address"/>
+        <result column="is_orders" property="isOrders"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+        <collection property="employeeList" javaType="java.util.List" resultMap="EmployeeResult"/>
+        <collection property="contactList" javaType="java.util.List" resultMap="ContactResult"/>
+    </resultMap>
+    <!-- 员工映射结果 -->
+    <resultMap id="EmployeeResult" type="com.hp.entity.Employee">
+        <id column="emp_id" property="empId"/>
+        <result column="emp_name" property="empName"/>
+        <result column="pwd" property="pwd"/>
+        <result column="salt" property="salt"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+    <!-- 聊天内容映射结果 -->
+    <resultMap id="ContactResult" type="com.hp.entity.Contact">
+        <id column="contact_id" property="contactId"/>
+        <result column="way" property="way"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct e.emp_name,co.contact_id,co.content,co.way,cu.customer_id,cu.customer_name,cu.sex,
+        cu.company,cu.address,cu.telephone,cu.is_orders
+        from customer cu
+        left join customer_emp ce on ce.customer_id = cu.customer_id
+        left join cont_cust_emp cce on cce.customer_id = cu.customer_id
+        left join employee e on e.emp_id = ce.emp_id
+        left join contact co on co.contact_id = cce.contact_id
+    </sql>
+
+    <select id="selectList" resultMap="CustomerResult">
+        <include refid="Base_Column_List"/>
+        where cu.is_del = 0
+    </select>
+
+</mapper>

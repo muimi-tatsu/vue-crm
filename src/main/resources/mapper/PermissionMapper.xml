@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hp.mapper.PermissionMapper">
+    <!-- 权限映射结果 -->
+    <resultMap id="PermissionResult" type="com.hp.entity.Permission">
+        <id column="perm_id" property="permId"/>
+        <result column="perm_name" property="permName"/>
+        <result column="url" property="url"/>
+        <result column="permission" property="permission"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+    <!-- 角色映射结果 -->
+    <resultMap id="RoleResult" type="com.hp.entity.Role">
+        <id column="role_id" property="roleId"/>
+        <result column="role_name" property="roleName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct r.role_id,r.role_name,r.create_time,r.update_time,r.is_del,
+        p.perm_id,p.perm_name,p.url,p.permission
+        from permission p
+        left join role_permission rp on rp.perm_id= p.perm_id
+        left join role r on r.role_id = rp.role_id
+    </sql>
+
+    <select id="selectList" resultMap="PermissionResult">
+        <include refid="Base_Column_List"/>
+        where p.is_del = 0
+    </select>
+
+</mapper>
+

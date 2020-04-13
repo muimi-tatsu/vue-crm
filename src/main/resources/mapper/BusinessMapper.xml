@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hp.mapper.BusinessMapper">
+    <!-- 业务映射结果 -->
+    <resultMap id="BusinessResult" type="com.hp.entity.Business">
+        <id column="business_id" property="businessId"/>
+        <result column="business_name" property="businessName"/>
+        <result column="head" property="head"/>
+        <result column="telephone" property="telephone"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+        <collection property="ordersList" javaType="java.util.List" resultMap="OrdersResult"/>
+        <collection property="customerList" javaType="java.util.List" resultMap="CustomerResult"/>
+    </resultMap>
+    <!-- 订单映射结果 -->
+    <resultMap id="OrdersResult" type="com.hp.entity.Orders">
+        <id column="orders_id" property="ordersId"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+    <!-- 客户映射结果 -->
+    <resultMap id="CustomerResult" type="com.hp.entity.Customer">
+        <id column="customer_id" property="customerId"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="sex" property="sex"/>
+        <result column="telephone" property="telephone"/>
+        <result column="company" property="company"/>
+        <result column="address" property="address"/>
+        <result column="is_orders" property="isOrders"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_del" property="isDel"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct o.orders_id,o.total_price,b.business_id,b.business_name,b.head,
+        b.telephone,b.description,c.customer_id,c.customer_name
+        from business b
+        left join orders_busi_cust obc on obc.business_id = b.business_id
+        left join orders o on o.orders_id = obc.orders_id
+        left join customer c on c.customer_id = obc.customer_id
+    </sql>
+
+    <select id="selectList" resultMap="BusinessResult">
+        <include refid="Base_Column_List"/>
+        where b.is_del = 0
+    </select>
+
+</mapper>
